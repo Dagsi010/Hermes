@@ -307,6 +307,12 @@ public partial class App : Application
         };
         window.EditLayoutRequested += () => _overlay.SetEditMode(true);
         window.RebuildRequested += () => ShowSettingsWindow(window);
+        // While Settings records a new hotkey, release the old one so it can be pressed again.
+        window.HotkeyRecording += recording =>
+        {
+            if (recording) _hotkey?.Unregister();
+            else RegisterHotkey();
+        };
         window.Closed += (_, _) =>
         {
             if (_settingsWindow == window) _settingsWindow = null;

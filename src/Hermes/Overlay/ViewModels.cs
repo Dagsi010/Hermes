@@ -26,7 +26,8 @@ public sealed class LessonVM : Observable
     public LessonVM(Lesson lesson) => Lesson = lesson;
 
     public Lesson Lesson { get; }
-    public string Time => Loc.Time(Lesson.Start);
+    /// <summary>"08:30 - 09:20"</summary>
+    public string Time => $"{Loc.Time(Lesson.Start)} - {Loc.Time(Lesson.End)}";
     public string Subject => Lesson.Subject;
     public string Room => Lesson.Room;
     public bool IsBreak => Lesson.IsBreak;

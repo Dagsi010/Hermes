@@ -95,7 +95,7 @@ public partial class SettingsWindow : Window
         Select(MonitorBox, current?.DeviceName ?? "");
 
         RefreshTimePicker.Time = S.RefreshTime;
-        HotkeyBox.Text = S.Hotkey;
+        if (!_recording) HotkeyButton.Content = S.Hotkey;
         Select(HotkeyActionBox, S.HotkeyAction.ToString());
 
         ReminderBox.IsChecked = S.NotifyEveningReminder;
@@ -225,13 +225,69 @@ public partial class SettingsWindow : Window
 
     void EditLayout_Click(object sender, RoutedEventArgs e) => EditLayoutRequested?.Invoke();
 
-    void Hotkey_PreviewKeyDown(object sender, KeyEventArgs e)
+    // ---- Hotkey recording ------------------------------------------------------------
+    // The old read-only text box gave no sign that it was waiting for keys, so it looked like
+    // the hotkey couldn't be changed. Now: click the button, it says so, press the combination.
+
+    bool _recording;
+
+    /// <summary>True while waiting for a new combination: the old hotkey is released meanwhile so it can be pressed again.</summary>
+    public event Action<bool>? HotkeyRecording;
+
+    void Hotkey_Click(object sender, RoutedEventArgs e)
+    {
+        if (_recording) StopRecording();
+        else StartRecording();
+    }
+
+    void StartRecording()
+    {
+        _recording = true;
+        HotkeyRecording?.Invoke(true);
+        HotkeyButton.Content = Loc.T("s.hotkey.press");
+        if (TryFindResource("AccentButtonStyle") is Style accent) HotkeyButton.Style = accent;
+        PreviewKeyDown += OnRecordKey;
+        Deactivated += OnRecordDeactivated;
+    }
+
+    void StopRecording()
+    {
+        if (!_recording) return;
+        _recording = false;
+        PreviewKeyDown -= OnRecordKey;
+        Deactivated -= OnRecordDeactivated;
+        HotkeyButton.ClearValue(StyleProperty);
+        HotkeyButton.Content = S.Hotkey;
+        HotkeyRecording?.Invoke(false);
+    }
+
+    void OnRecordDeactivated(object? sender, EventArgs e) => StopRecording();
+
+    void OnRecordKey(object sender, KeyEventArgs e)
     {
         e.Handled = true;
-        var key = e.Key == Key.System ? e.SystemKey : e.Key;
-        if (HotkeyService.Format(Keyboard.Modifiers, key) is not { } combo) return;
-        HotkeyBox.Text = combo;
+        var key = e.Key switch
+        {
+            Key.System => e.SystemKey,          // anything with Alt
+            Key.ImeProcessed => e.ImeProcessedKey,
+            Key.DeadCharProcessed => e.DeadCharProcessedKey, // AltGr combinations on the Icelandic layout
+            _ => e.Key,
+        };
+        if (key == Key.Escape)
+        {
+            StopRecording();
+            return;
+        }
+        var modifiers = Keyboard.Modifiers;
+        if (HotkeyService.Format(modifiers, key) is not { } combo)
+        {
+            // Only modifiers so far: show what is held, e.g. "Ctrl+Alt+...".
+            var held = HotkeyService.Format(modifiers, Key.None, partial: true);
+            HotkeyButton.Content = string.IsNullOrEmpty(held) ? Loc.T("s.hotkey.press") : held + "+...";
+            return;
+        }
         S.Hotkey = combo;
+        StopRecording(); // re-registers through HotkeyRecording(false)
         Commit();
     }
 

@@ -48,25 +48,33 @@ public sealed class HotkeyService : IDisposable
                     break;
             }
         }
-        return modifiers != 0 && key != Key.None;
+        return key != Key.None && (modifiers != 0 || IsFunctionKey(key));
     }
 
-    /// <summary>Formats a key press from the settings box as "Ctrl+Alt+H".</summary>
-    public static string? Format(ModifierKeys modifiers, Key key)
+    /// <summary>
+    /// Formats a key press as "Ctrl+Alt+H". Needs at least one modifier, except for F1-F24.
+    /// With <paramref name="partial"/>, returns just the held modifiers ("Ctrl+Alt").
+    /// </summary>
+    public static string? Format(ModifierKeys modifiers, Key key, bool partial = false)
     {
-        if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift
-            or Key.LWin or Key.RWin or Key.System or Key.None) return null;
         var parts = new List<string>();
         if (modifiers.HasFlag(ModifierKeys.Control)) parts.Add("Ctrl");
         if (modifiers.HasFlag(ModifierKeys.Alt)) parts.Add("Alt");
         if (modifiers.HasFlag(ModifierKeys.Shift)) parts.Add("Shift");
         if (modifiers.HasFlag(ModifierKeys.Windows)) parts.Add("Win");
-        if (parts.Count == 0) return null;
+        if (partial) return string.Join("+", parts);
+
+        if (key is Key.LeftCtrl or Key.RightCtrl or Key.LeftAlt or Key.RightAlt or Key.LeftShift or Key.RightShift
+            or Key.LWin or Key.RWin or Key.System or Key.None) return null;
+        if (parts.Count == 0 && !IsFunctionKey(key)) return null;
         parts.Add(key.ToString());
         return string.Join("+", parts);
     }
 
-    void Unregister()
+    static bool IsFunctionKey(Key key) => key >= Key.F1 && key <= Key.F24;
+
+    /// <summary>Releases the hotkey (while Settings records a new one).</summary>
+    public void Unregister()
     {
         if (_registered) Native.UnregisterHotKey(_source.Handle, Id);
         _registered = false;

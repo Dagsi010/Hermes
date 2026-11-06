@@ -141,10 +141,12 @@
                     <Grid Style="{StaticResource Row}">
                         <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="200" /></Grid.ColumnDefinitions>
                         <TextBlock Style="{StaticResource Label}" Text="{Binding [s.hotkey], Source={x:Static core:Loc.Instance}}" />
-                        <TextBox x:Name="HotkeyBox" Grid.Column="1" IsReadOnly="True" IsReadOnlyCaretVisible="False"
-                                 PreviewKeyDown="Hotkey_PreviewKeyDown"
-                                 ToolTip="{Binding [s.hotkey.hint], Source={x:Static core:Loc.Instance}}" />
+                        <!-- Click, then press the new combination; the window catches the keys while recording. -->
+                        <Button x:Name="HotkeyButton" Grid.Column="1" HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Left" Padding="12,6" Click="Hotkey_Click" />
                     </Grid>
+                    <TextBlock x:Name="HotkeyHint" Style="{StaticResource Hint}" Margin="0,0,0,4"
+                               Text="{Binding [s.hotkey.hint], Source={x:Static core:Loc.Instance}}" />
                     <TextBlock x:Name="HotkeyStatus" Style="{StaticResource Hint}" Foreground="#FFB4A0" Visibility="Collapsed"
                                Text="{Binding [s.hotkey.inUse], Source={x:Static core:Loc.Instance}}" />
                     <Grid Style="{StaticResource Row}">
