@@ -1,0 +1,45 @@
+<UserControl x:Class="Hermes.Ui.TimePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="clr-namespace:Hermes.Ui">
+    <StackPanel>
+        <!-- The current time; click to open the wheels underneath. -->
+        <Border x:Name="Header" Background="{DynamicResource SetControl}" BorderBrush="{DynamicResource SetControlBorder}" BorderThickness="1" CornerRadius="6"
+                Padding="12,6" Cursor="Hand" MouseLeftButtonUp="Header_Click">
+            <DockPanel>
+                <Path x:Name="Chevron" DockPanel.Dock="Right" Data="M 0 0 L 5 5 L 10 0" Stroke="{DynamicResource SetHint}"
+                      StrokeThickness="1.6" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                        <RotateTransform x:Name="ChevronRotation" Angle="0" />
+                    </Path.RenderTransform>
+                </Path>
+                <TextBlock x:Name="TimeText" Foreground="White" FontSize="15" Typography.NumeralAlignment="Tabular" />
+            </DockPanel>
+        </Border>
+
+        <!-- Wheels, revealed by animating the height of this clipping host. -->
+        <Border x:Name="WheelHost" Height="0" ClipToBounds="True">
+            <Border Background="{DynamicResource SetCard}" BorderBrush="{DynamicResource SetControlBorder}" BorderThickness="1" CornerRadius="10"
+                    Margin="0,6,0,0" Padding="8,6">
+                <Grid>
+                    <Grid.OpacityMask>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Offset="0" Color="#00000000" />
+                            <GradientStop Offset="0.28" Color="#FF000000" />
+                            <GradientStop Offset="0.72" Color="#FF000000" />
+                            <GradientStop Offset="1" Color="#00000000" />
+                        </LinearGradientBrush>
+                    </Grid.OpacityMask>
+                    <!-- Selection band behind the middle row -->
+                    <Border Height="36" CornerRadius="8" Background="{DynamicResource SetBand}" VerticalAlignment="Center" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <ui:WheelColumn x:Name="Hours" Count="24" Width="64" />
+                        <TextBlock Text=":" FontSize="22" FontWeight="SemiBold" Foreground="White"
+                                   VerticalAlignment="Center" Margin="2,0,2,4" />
+                        <ui:WheelColumn x:Name="Minutes" Count="60" Width="64" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Border>
+    </StackPanel>
+</UserControl>

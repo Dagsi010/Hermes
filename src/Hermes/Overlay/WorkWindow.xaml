@@ -1,0 +1,106 @@
+<ov:OverlayWindow x:Class="Hermes.Overlay.WorkWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:ov="clr-namespace:Hermes.Overlay"
+                  Title="Hermes Work" Width="460" Height="560">
+    <Grid>
+        <StackPanel x:Name="Body" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="12">
+            <TextBlock x:Name="WorkHeading" Style="{StaticResource OvHeading}" HorizontalAlignment="Right" Margin="0,0,20,6" />
+
+            <ItemsControl x:Name="WorkList" HorizontalAlignment="Right">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type ov:AssignmentVM}">
+                        <!-- Near-transparent background so the whole row catches the click. -->
+                        <Border x:Name="Row" Background="#01000000" Padding="6,3,0,3" HorizontalAlignment="Right"
+                                Cursor="Hand" ov:Hit.Interactive="True" MouseLeftButtonUp="Assignment_Click">
+                            <DockPanel>
+                                <Ellipse x:Name="Dot" DockPanel.Dock="Right" Width="8" Height="8" Margin="12,0,0,0"
+                                         VerticalAlignment="Center" Fill="{DynamicResource DueLater}" />
+                                <StackPanel HorizontalAlignment="Right">
+                                    <TextBlock x:Name="Title" Text="{Binding Title}" Style="{StaticResource OvText}"
+                                               HorizontalAlignment="Right" TextAlignment="Right" />
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <TextBlock Text="{Binding Course}" Style="{StaticResource OvSmall}" Opacity="0.7" />
+                                        <TextBlock Text=" · " Style="{StaticResource OvSmall}" Opacity="0.5" />
+                                        <TextBlock x:Name="Countdown" Text="{Binding Countdown}" Style="{StaticResource OvSmall}"
+                                                   Foreground="{DynamicResource DueLater}" />
+                                    </StackPanel>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Urgency}" Value="Overdue">
+                                <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource DueToday}" />
+                                <Setter TargetName="Countdown" Property="Foreground" Value="{DynamicResource DueToday}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Urgency}" Value="Today">
+                                <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource DueToday}" />
+                                <Setter TargetName="Countdown" Property="Foreground" Value="{DynamicResource DueToday}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Urgency}" Value="Tomorrow">
+                                <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource DueTomorrow}" />
+                                <Setter TargetName="Countdown" Property="Foreground" Value="{DynamicResource DueTomorrow}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsDone}" Value="True">
+                                <Setter TargetName="Title" Property="TextDecorations" Value="Strikethrough" />
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Row" Storyboard.TargetProperty="Opacity"
+                                                             To="0.35" Duration="0:0:0.6" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Row" Storyboard.TargetProperty="Opacity"
+                                                             To="1" Duration="0:0:0.3" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock x:Name="NoWork" Style="{StaticResource OvText}" Opacity="0.7" HorizontalAlignment="Right"
+                       Margin="0,0,20,0" Visibility="Collapsed" />
+
+            <TextBlock x:Name="NoticesHeading" Style="{StaticResource OvHeading}" HorizontalAlignment="Right" Margin="0,22,20,6" />
+
+            <ItemsControl x:Name="NoticeList" HorizontalAlignment="Right">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type ov:NoticeVM}">
+                        <Border x:Name="Row" Padding="6,2,0,2" HorizontalAlignment="Right" MouseLeftButtonUp="Notice_Click">
+                            <DockPanel>
+                                <Ellipse x:Name="Dot" DockPanel.Dock="Right" Width="6" Height="6" Margin="14,0,1,0"
+                                         VerticalAlignment="Center" Fill="{DynamicResource Fg}" Opacity="0.7" />
+                                <TextBlock x:Name="Text" Text="{Binding Text}" Style="{StaticResource OvText}"
+                                           TextAlignment="Right" HorizontalAlignment="Right" />
+                            </DockPanel>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Kind}" Value="Warning">
+                                <Setter TargetName="Text" Property="Foreground" Value="{DynamicResource Warn}" />
+                                <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource Warn}" />
+                                <Setter TargetName="Dot" Property="Opacity" Value="1" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Kind}" Value="Link">
+                                <Setter TargetName="Text" Property="Foreground" Value="{DynamicResource Accent}" />
+                                <Setter TargetName="Text" Property="TextDecorations" Value="Underline" />
+                                <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource Accent}" />
+                                <Setter TargetName="Row" Property="Background" Value="#01000000" />
+                                <Setter TargetName="Row" Property="Cursor" Value="Hand" />
+                                <Setter TargetName="Row" Property="ov:Hit.Interactive" Value="True" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+
+        <ov:EditChrome x:Name="Chrome" />
+    </Grid>
+</ov:OverlayWindow>

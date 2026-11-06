@@ -1,0 +1,44 @@
+<UserControl x:Class="Hermes.Overlay.EditChrome"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Visibility="Collapsed">
+    <Grid>
+        <!-- Faint dashed outline; the near-transparent fill makes the whole area draggable. -->
+        <Rectangle x:Name="Frame" Fill="#14FFFFFF" Stroke="#A0FFFFFF" StrokeThickness="1"
+                   StrokeDashArray="4 3" RadiusX="6" RadiusY="6" Cursor="SizeAll" />
+
+        <TextBlock x:Name="TitleText" Margin="10,7,0,0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                   FontFamily="{DynamicResource UiFontSmall}" FontSize="12" Foreground="White"
+                   IsHitTestVisible="False">
+            <TextBlock.Effect>
+                <DropShadowEffect BlurRadius="4" ShadowDepth="0" Opacity="0.8" Color="Black" />
+            </TextBlock.Effect>
+        </TextBlock>
+
+        <Button x:Name="DoneButton" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,6,8,0"
+                Click="DoneButton_Click" Cursor="Hand">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="Bg" Background="{DynamicResource SetBand}" BorderBrush="{DynamicResource SetAccent}" BorderThickness="1"
+                            CornerRadius="10" Padding="10,2">
+                        <ContentPresenter TextElement.Foreground="White" TextElement.FontSize="12" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bg" Property="Background" Value="{DynamicResource SetControlBorder}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+
+        <Rectangle x:Name="GripTL" Tag="TL" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Top"
+                   Fill="#D0FFFFFF" RadiusX="2" RadiusY="2" Cursor="SizeNWSE" Margin="-1,-1,0,0" />
+        <Rectangle x:Name="GripTR" Tag="TR" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Top"
+                   Fill="#D0FFFFFF" RadiusX="2" RadiusY="2" Cursor="SizeNESW" Margin="0,-1,-1,0" />
+        <Rectangle x:Name="GripBL" Tag="BL" Width="10" Height="10" HorizontalAlignment="Left" VerticalAlignment="Bottom"
+                   Fill="#D0FFFFFF" RadiusX="2" RadiusY="2" Cursor="SizeNESW" Margin="-1,0,0,-1" />
+        <Rectangle x:Name="GripBR" Tag="BR" Width="10" Height="10" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                   Fill="#D0FFFFFF" RadiusX="2" RadiusY="2" Cursor="SizeNWSE" Margin="0,0,-1,-1" />
+    </Grid>
+</UserControl>

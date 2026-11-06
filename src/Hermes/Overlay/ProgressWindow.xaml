@@ -1,0 +1,17 @@
+<ov:OverlayWindow x:Class="Hermes.Overlay.ProgressWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:ov="clr-namespace:Hermes.Overlay"
+                  Title="Hermes Progress" Width="960" Height="110">
+    <Grid>
+        <StackPanel x:Name="Body" VerticalAlignment="Center" Margin="12,8">
+            <TextBlock x:Name="Headline" Style="{StaticResource OvText}" HorizontalAlignment="Center"
+                       TextTrimming="CharacterEllipsis" Margin="0,0,0,9" />
+            <Canvas x:Name="Bar" Height="4" SizeChanged="Bar_SizeChanged" />
+            <TextBlock x:Name="Footer" Style="{StaticResource OvSmall}" Opacity="0.85" HorizontalAlignment="Center"
+                       Margin="0,8,0,0" />
+        </StackPanel>
+
+        <ov:EditChrome x:Name="Chrome" />
+    </Grid>
+</ov:OverlayWindow>

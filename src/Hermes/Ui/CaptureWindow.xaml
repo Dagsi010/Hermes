@@ -1,0 +1,60 @@
+<Window x:Class="Hermes.Ui.CaptureWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:core="clr-namespace:Hermes.Core"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        ThemeMode="Dark"
+        Title="{Binding [cap.title], Source={x:Static core:Loc.Instance}}"
+        Icon="pack://application:,,,/Assets/hermes-256.png"
+        Width="1200" Height="860" MinWidth="700" MinHeight="500"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource SetBg}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Margin="20,14,20,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <!-- Pulsing dot while recording -->
+                    <Ellipse x:Name="RecDot" Width="10" Height="10" Fill="{DynamicResource SetAccent}" Margin="0,0,10,0"
+                             VerticalAlignment="Center">
+                        <Ellipse.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" From="1" To="0.25" Duration="0:0:0.9" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Ellipse.Triggers>
+                    </Ellipse>
+                    <TextBlock Text="{Binding [cap.header], Source={x:Static core:Loc.Instance}}" FontSize="18"
+                               FontWeight="SemiBold" Foreground="White" />
+                    <TextBlock x:Name="CountText" Foreground="{DynamicResource SetHint}" Margin="14,0,0,0" VerticalAlignment="Center" />
+                </StackPanel>
+                <TextBlock Text="{Binding [cap.steps], Source={x:Static core:Loc.Instance}}" Foreground="{DynamicResource SetText}"
+                           TextWrapping="Wrap" Margin="20,6,0,0" />
+                <TextBlock Text="{Binding [cap.privacy], Source={x:Static core:Loc.Instance}}" Foreground="{DynamicResource SetHint}"
+                           FontSize="12" TextWrapping="Wrap" Margin="20,4,0,0" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="16,0,0,0">
+                <Button x:Name="SaveButton" Click="Save_Click" Padding="14,6" Margin="0,0,8,0"
+                        Style="{DynamicResource AccentButtonStyle}"
+                        Content="{Binding [cap.save], Source={x:Static core:Loc.Instance}}" />
+                <Button Click="Close_Click" Padding="14,6"
+                        Content="{Binding [cap.close], Source={x:Static core:Loc.Instance}}" />
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1" Margin="12,0,12,12" CornerRadius="8" ClipToBounds="True" Background="White">
+            <wv2:WebView2 x:Name="Browser" />
+        </Border>
+    </Grid>
+</Window>

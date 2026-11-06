@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>Hermes</AssemblyName>
+    <RootNamespace>Hermes</RootNamespace>
+    <Version>0.1.0</Version>
+    <ApplicationIcon>Assets\hermes.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- Window.ThemeMode (Fluent theme) is marked experimental in WPF. -->
+    <!-- WFO0003: DPI awareness comes from app.manifest because WPF, not WinForms, owns the process. -->
+    <NoWarn>$(NoWarn);WPF0001;WFO0003</NoWarn>
+
+    <!-- Single self-contained exe on publish. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <!-- Compression halves the exe but decompresses into RAM (~90 MB more for an always-on app). -->
+    <EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+    <!-- Keep NuGet XML docs (WebView2) out of the publish folder: just the exe. -->
+    <PublishReferencesDocumentationFiles>false</PublishReferencesDocumentationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WinForms is only used for the tray icon; keep its types out of global scope. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+    <!-- WPF leaves System.IO out of implicit usings (Path clashes with Shapes.Path). -->
+    <Using Include="System.IO" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\hermes.ico" />
+    <Resource Include="Assets\hermes-light.ico" />
+    <Resource Include="Assets\hermes-256.png" />
+    <None Remove="Assets\verzlo-logo.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
+  </ItemGroup>
+
+</Project>
